@@ -1,43 +1,50 @@
 # Participant: How to Contribute
 
+
 ## 🤝 Contributing to [PESto-do](https://github.com/acmpesuecc/PESto-do)
-Thank you for your interest in contributing to this project as part of **HackNight 7.0** 🎉  
 
-1. **Check for Open Issues**  
-   - Look for any open issues in the repository.  
-   - If you find one that interests you, ask to be assigned to it by commenting on the issue.  
+Thank you for your interest in contributing to this project as part of **HackNight 7.0** 🎉
 
-2. **Setup Your Codebase**:
-   - **Optional:** If you are new to Git, check out this guide: [Git Up and Running (Git 101)](https://rowjee.com/blog/git_up_and_running)
-   - **Fork** the repository to your GitHub account and copy it's clone URL
-   - **Clone** your forked repository to your local machine using [Git](https://docs.github.com/en/get-started/getting-started-with-git/set-up-git) (make sure it's installed)
+### Prerequisites
 
-   ```bash
-   git clone git@github.com:your-username/PESto-do.git
-   ```
+Before you begin, ensure you have the following installed on your local machine:
+* **[Node.js](https://nodejs.org/)** (version 14 or later) and **[npm](https://www.npmjs.com/)** (Node Package Manager). You can download Node.js [here](https://nodejs.org/en/download/). npm comes bundled with Node.js.
 
-5. **Make Your Changes**
-   After cloning and setting up your branch, make the necessary changes as required for the issue in your IDE.
+1.  **Check for Open Issues**
+    * Look for any open issues in the repository.
+    * If you find one that interests you, ask to be assigned to it by commenting on the issue.
 
-6. **Commit and Push**:
-   Commit your changes and push them to your fork:
+2.  **Setup Your Codebase**:
+    * **Fork** the repository to your GitHub account and copy its clone URL.
+    * **Clone** your forked repository to your local machine.
+        ```bash
+        git clone git@github.com:your-username/PESto-do.git
+        ```
+    * **Navigate to the project directory**:
+        ```sh
+        cd PESto-do
+        ```
+    * **Install the dependencies**:
+        ```sh
+        npm install
+        ```
 
-   ```bash
-   git commit -m "Describe the changes you made"
-   git push
-   ```
+3.  **Make Your Changes**
+    * After cloning and setting up your branch, make the necessary changes as required for the issue in your IDE.
 
-   Alternatively, use VSCode's inbuilt Git source control pane `Ctrl+Shift+G` if you're unconfortable with a CLI
+4.  **Commit and Push**:
+    * Commit your changes and push them to your fork:
+        ```bash
+        git commit -m "Describe the changes you made"
+        git push
+        ```
 
-7. **Submit a Pull Request**:
-   After pushing your changes, open a pull request to pull changes from your fork to the original repository.
-   Describe your changes and how you are solving the issue in detail.
+5.  **Submit a Pull Request**:
+    * After pushing your changes, open a pull request to pull changes from your fork to the original repository.
+    * Describe your changes and how you are solving the issue in detail.
 
-8. **Get Feedback**
-   Wait for a maintainer to review your pull request (PR) and provide feedback.
-
-9. **Gain Bounty Points**
-   If everything is approved, your issue will be closed, and you'll gain bounty points on the leaderboard!
+6.  **Get Feedback**
+    * Wait for a maintainer to review your pull request (PR) and provide feedback.
 
 ## Project Structure
 
@@ -52,6 +59,7 @@ The project layout looks like this:
 ├── package-lock.json
 └── README.md
 ```
+
 ## Pull Request (PR) Guidelines
 
 - Keep PRs focused (one feature/fix per PR).
