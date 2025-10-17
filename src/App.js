@@ -16,7 +16,6 @@ function App() {
     const [greeting, setGreeting] = useState('');
     const [icon, setIcon] = useState(null);
     const [isLofiPlaying, setLofiPlaying] = useState(false);
-
     const toggleCourses = (year) => {
         if (year === 2) setYear2Open(!isYear2Open);
     };

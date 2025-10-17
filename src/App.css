@@ -2,15 +2,36 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Chakra Petch', sans-serif;
+  font-family: 'Chakra Petch', sans-serif;
 }
 
 body {
-    background-color: #121212;
-    color: #b1b1b1;
+    background-color: #0f0139;
+    color: #1a01ff;
 }
 
+/* Global Stylesheet (main.css) */
+.page-container {
+    /* Set up a grid with two columns */
+    display: grid;
+    /* Define the column widths: Sidebar (250px) and Main Content (fill the rest) */
+    grid-template-columns: 250px 1fr; 
+    min-height: 100vh; /* Ensure it takes full viewport height */
+}
 
+.sidebar-menu {
+    /* Place it in the first column */
+    grid-column: 1 / 2; 
+    background-color: #070012; /* Light background to visually separate it */
+    padding: 20px;
+    border-right: 1px solid #080034;
+}
+
+.main-content {
+    /* Place it in the second column */
+    grid-column: 2 / 3;
+    padding: 40px;
+}
 
 /* Header styling */
 header {
@@ -18,19 +39,19 @@ header {
     justify-content: center; /* Centering logo */
     align-items: center;
     padding: 20px;
-    background-color: #1a1a1a;
+    background-color: #230067;
     position: relative; /* Make header relative for positioning of the lofi button */
 }
 
 .PES {
-    color: #f49221;
-    font-family: 'Caveat', cursive;
+    color: #fa7900;
+  font-family: 'Chakra Petch', sans-serif;
     font-weight: 900;
 }
 
 .to {
-    color: #405084;
-    font-family: 'Caveat', cursive;
+    color: #fbf4ef;
+  font-family: 'Chakra Petch', sans-serif;
     font-weight: 900;
 }
 
@@ -43,11 +64,12 @@ h2 {
 /* Main Content */
 .content {
     margin: 30px;
-    font-size: 1.3rem;
+    font-size: 2.2rem;
+  font-family: 'Chakra Petch', sans-serif;
 }
 
 .heading {
-    font-size: 3rem;
+    font-size: 2.2rem;
     margin: 20px;
     margin-bottom: 20px;
 }
@@ -57,8 +79,8 @@ h2 {
     display: block;
     margin: 10px 0;
     text-decoration: none;
-    color: #b1b1b1;
-    font-size: 1.2rem;
+    color: #bda5fa;
+    font-size: 2.2rem;
 }
 
 h3 {
@@ -71,11 +93,11 @@ h3 {
 
 /* Button Styling */
 button.toggle-btn {
-    background: #2a2a2a;
+    background: #342e6c;
     border: none;
     color: #fff;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 2.2rem;
     margin-left: 10px;
     padding: 10px 20px;
     border-radius: 8px; 
@@ -97,12 +119,12 @@ button.toggle-btn:focus {
 
 /* Lofi Player Button */
 .lofi-button {
-    background-color: #f49221;
+    background-color: #4421f4;
     color: #121212;
     border: none;
     border-radius: 8px;
     padding: 10px 20px;
-    font-size: 1rem;
+    font-size: 2.2rem;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
