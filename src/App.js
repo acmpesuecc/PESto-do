@@ -3,6 +3,7 @@ import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon, faMugHot } from '@fortawesome/free-solid-svg-icons';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Sidebar from './components/Sidebar';
 
 import Afll from './components/year2/cse/Afll.js';
 import Ddco from './components/year2/cse/Ddco.js';
@@ -46,25 +47,37 @@ function App() {
 
     return (
         <Router>
-            <div>
+            <div className="app-container">
                 <header>
                     <div className="logo">
-                        <h1><span class='PES'>PES</span><span class='to'>to</span></h1>
+                        <h1><span className="PES">PES</span><span className="to">to</span></h1>
                     </div>
                     <button className="lofi-button" onClick={toggleLofi}>
                         {isLofiPlaying ? 'Pause Lofi' : 'Play Lofi'}
                     </button>
                 </header>
 
-                <div id="greeting-container">
-                    <h1 className="heading">
-                        <FontAwesomeIcon icon={icon} /> {greeting}
-                    </h1>
-                    <h2>Choose Your Course</h2>
-                </div>
+                <div className="main-layout">
+                    <Sidebar />
+                    <main className="main-content">
+                        <div id="greeting-container">
+                            <h1 className="heading">
+                                <FontAwesomeIcon icon={icon} /> {greeting}
+                            </h1>
+                            <h2>Choose Your Course</h2>
+                        </div>
 
-                <div className="content">
-                    <Cse isYear2Open={isYear2Open} toggleCourses={toggleCourses} />
+                        <div className="content">
+                            <Routes>
+                                <Route path="/" element={<Cse isYear2Open={isYear2Open} toggleCourses={toggleCourses} />} />
+                                <Route path="/year2/cse/ddco" element={<Ddco />} />
+                                <Route path="/year2/cse/dsa" element={<Dsa />} />
+                                <Route path="/year2/cse/mcse" element={<Mcse />} />
+                                <Route path="/year2/cse/afll" element={<Afll />} />
+                                <Route path="/year2/cse/wt" element={<Wt />} />
+                            </Routes>
+                        </div>
+                    </main>
                 </div>
 
                 {isLofiPlaying && (

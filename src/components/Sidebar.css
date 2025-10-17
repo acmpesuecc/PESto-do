@@ -1,0 +1,113 @@
+/* Sidebar.css (Modified for Orange Accents) */
+
+:root {
+    /* Define Orange Accent for easy use across CSS files */
+    --color-orange-accent: #ff6a00;
+    --header-height: 70px; /* Essential for correct positioning with the new header */
+    --sidebar-width: 280px; /* Ensure this matches your sidebar width */
+    /* ... other variables (var(--text-primary), etc.) should also be defined ... */
+}
+
+/* Sidebar container */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--header-height); /* Starts below the new header */
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--header-height));
+    background: linear-gradient(180deg, rgba(11,99,255,0.04), rgba(255,106,0,0.02)); /* Subtle gradient */
+    padding: var(--space-lg);
+    overflow-y: auto;
+    border-right: 1px solid rgba(255,255,255,0.03);
+    box-shadow: var(--box-elev);
+    z-index: 50;
+}
+
+/* Section group */
+.sidebar-section { margin-bottom: var(--space-lg); }
+
+/* Year */
+.sidebar-year {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-sm);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+/* Branch */
+.sidebar-branch { margin-left: 0; margin-bottom: var(--space-md); }
+.sidebar-branch-name {
+    color: var(--color-blue);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+}
+
+/* Subject list */
+.sidebar-subjects { list-style: none; padding-left: 0; margin: 0; }
+.subject-item { margin-bottom: var(--space-xs); border-radius: 8px; overflow: hidden; }
+
+/* Subject link header (click to expand) */
+.subject-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.08s ease;
+}
+/* Enhanced hover and focus state */
+.subject-header:hover, .subject-header[aria-expanded="true"] { 
+    background: rgba(11,99,255,0.06); 
+    transform: translateY(-1px); 
+}
+
+/* Subject title */
+.subject-title {
+    color: var(--text-secondary);
+    font-size: var(--text-base);
+    font-weight: 600;
+}
+
+/* Units nested list */
+.subject-units {
+    list-style: none;
+    padding-left: 12px;
+    margin: 8px 0 0 0;
+    display: none;
+    flex-direction: column;
+}
+.subject-units.show { display: flex; }
+
+.unit-link {
+    display: block;
+    padding: 8px 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: var(--text-sm);
+    transition: background 0.12s ease, color 0.12s ease;
+}
+/* Orange hover for unit links */
+.unit-link:hover {
+    background: rgba(255,106,0,0.15); 
+    color: var(--text-primary);
+}
+
+/* small screens: sticky top */
+@media (max-width: 900px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+}
