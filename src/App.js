@@ -11,6 +11,16 @@ import Mcse from './components/year2/cse/Mcse.js';
 import Wt from './components/year2/cse/Wt.js';
 import Cse from './components/year2/Cse';
 
+const STREAM_CONFIG = {
+  lofi: process.env.REACT_APP_LOFI_STREAM_URL || 'https://ec3.yesstreaming.net:3755/stream',
+  backup: process.env.REACT_APP_BACKUP_STREAM_URL || 'https://stream.zeno.fm/f3wvbbqmdg8uv'
+};
+
+const ERROR_MESSAGES = {
+  LOAD_ERROR: 'Failed to load audio stream. Please check your connection.',
+  NETWORK_ERROR: 'Network error. Please check your internet connection.'
+};
+
 function App() {
     const [isYear2Open, setYear2Open] = useState(false);
     const [greeting, setGreeting] = useState('');
@@ -40,10 +50,61 @@ function App() {
         }
     }, []);
 
-    const toggleLofi = () => {
-        setLofiPlaying(!isLofiPlaying);
+    const handleStreamError = () => {
+        setStreamError(ERROR_MESSAGES.LOAD_ERROR);
+        setLofiPlaying(false);
+        setIsLoading(false);
     };
 
+    const handleStreamLoad = () => {
+        setStreamError(null);
+        setIsLoading(false);
+    };
+
+    const handleStreamLoading = () => {
+        setIsLoading(true);
+        setStreamError(null);
+    };
+
+    const toggleLofi = () => {
+         if (isLofiPlaying) {
+            // Stop playback
+            setLofiPlaying(false);
+            setStreamError(null);
+            setIsLoading(false);
+        } else {
+            // Start playback
+            setLofiPlaying(true);
+            setIsLoading(true);
+            setStreamError(null);
+            
+            // Reset audio element to force reload
+            if (audioRef.current) {
+                audioRef.current.load();
+            }
+        }
+    };
+
+    const retryStream = () => {
+        setStreamError(null);
+        setIsLoading(true);
+        
+        if (audioRef.current) {
+            audioRef.current.load();
+        }
+    };
+
+    const useBackupStream = () => {
+        setStreamError(null);
+        setIsLoading(true);
+        
+        // Force reload with backup stream
+        if (audioRef.current) {
+            audioRef.current.src = STREAM_CONFIG.backup;
+            audioRef.current.load();
+        }
+    };
+    
     return (
         <Router>
             <div>
