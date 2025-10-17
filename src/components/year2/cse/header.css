@@ -1,0 +1,105 @@
+/* Header.css (Modified for Play Lofi on the Left) */
+:root {
+    --header-height: 70px;
+    --sidebar-width: 280px;
+    --content-padding-x: 40px; 
+    --color-orange-accent: #ff6a00;
+    --bg-primary: #0f0f0f; 
+    --text-primary: #ffffff;
+}
+
+.main-header {
+    /* Position and size */
+    position: fixed;
+    top: 0;
+    left: 0; 
+    width: 100%;
+    height: var(--header-height);
+    z-index: 100;
+    
+    /* Layout */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    /* Styling */
+    background-color: var(--bg-primary); 
+    padding: 0 var(--content-padding-x); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 1. Header Left: PES/Logo AND Play Lofi button (The area above the sidebar) */
+.header-left {
+    /* Set the width to match the sidebar */
+    width: var(--sidebar-width); 
+    
+    /* Use flex to align the PES and Play Lofi button side-by-side */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    
+    padding-right: var(--content-padding-x); 
+}
+
+.logo-text {
+    color: var(--color-orange-accent); 
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.play-lofi-btn {
+    /* Play Lofi is now inside header-left and styled to stand out */
+    background-color: var(--color-orange-accent); 
+    color: var(--bg-primary); 
+    padding: 6px 12px; /* Slightly smaller for fitting */
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem; 
+    box-shadow: 0 4px 10px rgba(255, 106, 0, 0.3);
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.play-lofi-btn:hover {
+    background-color: #ff8c3a; 
+    transform: translateY(-1px);
+}
+
+
+/* 2. Header Center: "Good Morning! Choose Your Course" */
+.header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    
+    /* Takes up all middle space */
+    flex-grow: 1; 
+    
+    /* Pushes content to start right after the sidebar area */
+    margin-left: calc(var(--sidebar-width) - var(--content-padding-x));
+    
+    transform: translateY(10px); 
+}
+
+.greeting {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.course-prompt {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.gear-icon {
+    margin-right: 10px;
+    color: var(--color-orange-accent); 
+}
+
+/* 3. Header Right: Empty or placeholder for other far-right elements */
+.header-right {
+    /* Ensures the header ends correctly */
+    min-width: 20px;
+}
