@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="./PESto.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="./PESto.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#000000" />
+		<meta
+			name="description"
+			content="Web site created using create-react-app"
+		/>
+		<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+		<!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
+		<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+		<!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -24,22 +24,30 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>PESto - TODO List</title>
+		<title>PESto - TODO List</title>
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
+		<link rel="stylesheet" href="style.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+		/>
+	</head>
+	<body>
+		<noscript>You need to enable JavaScript to run this app.</noscript>
+		<div id="root"></div>
+		<!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
 
@@ -49,5 +57,108 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-  </body>
+	</body>
 </html>
+
+<script src="https://unpkg.com/mocha/mocha.js"></script>
+<script src="https://unpkg.com/chai/chai.js"></script>
+<script>
+	mocha.setup("bdd");
+	const { expect } = chai;
+
+	async function loadIndexHtmlDom() {
+		const res = await fetch("./index.html", { cache: "no-store" });
+		if (!res.ok) throw new Error("Failed to fetch index.html");
+		const html = await res.text();
+		const parser = new DOMParser();
+		return parser.parseFromString(html, "text/html");
+	}
+
+	describe("public/index.html", function () {
+		this.timeout(5000);
+		let doc;
+
+		before(async () => {
+			doc = await loadIndexHtmlDom();
+		});
+
+		it('has <html lang="en">', () => {
+			const html = doc.querySelector("html");
+			expect(html).to.exist;
+			expect(html.getAttribute("lang")).to.equal("en");
+		});
+
+		it("has the expected <title>", () => {
+			expect(doc.title).to.equal("PESto - TODO List");
+		});
+
+		it("contains the React root container div#root", () => {
+			expect(doc.querySelector("div#root")).to.exist;
+		});
+
+		it("includes a <noscript> notice", () => {
+			const ns = doc.querySelector("noscript");
+			expect(ns).to.exist;
+			expect(ns.textContent.toLowerCase()).to.include("enable javascript");
+		});
+
+		it("includes required meta tags (charset, viewport, theme-color, description)", () => {
+			expect(doc.querySelector('meta[charset="utf-8"]')).to.exist;
+
+			const viewport = doc.querySelector('meta[name="viewport"]');
+			expect(viewport).to.exist;
+			expect(viewport.getAttribute("content")).to.include("width=device-width");
+
+			const theme = doc.querySelector('meta[name="theme-color"]');
+			expect(theme).to.exist;
+			expect(theme.getAttribute("content")).to.match(/^#?[0-9a-fA-F]{3,6}$/);
+
+			const desc = doc.querySelector('meta[name="description"]');
+			expect(desc).to.exist;
+			expect(desc.getAttribute("content")).to.match(/create-react-app/i);
+		});
+
+		it("links favicon and manifest", () => {
+			const icon = doc.querySelector('link[rel="icon"]');
+			expect(icon).to.exist;
+			expect(icon.getAttribute("href")).to.be.a("string").and.not.empty;
+
+			const manifest = doc.querySelector('link[rel="manifest"]');
+			expect(manifest).to.exist;
+		});
+
+		it("preconnects to Google Fonts and loads fontsheets", () => {
+			const preconnects = Array.from(
+				doc.querySelectorAll('link[rel="preconnect"]')
+			).map((l) => l.getAttribute("href") || "");
+			expect(preconnects.some((h) => /fonts\.googleapis\.com/.test(h))).to.be
+				.true;
+			expect(preconnects.some((h) => /fonts\.gstatic\.com/.test(h))).to.be.true;
+
+			const stylesheets = Array.from(
+				doc.querySelectorAll('link[rel="stylesheet"]')
+			).map((l) => l.getAttribute("href") || "");
+			expect(stylesheets.some((h) => /fonts\.googleapis\.com\/css2/.test(h))).to
+				.be.true;
+			expect(
+				stylesheets.some((h) => /Caveat/.test(h) || /Chakra\+Petch/.test(h))
+			).to.be.true;
+		});
+
+		it("includes Font Awesome stylesheet", () => {
+			const fa = Array.from(
+				doc.querySelectorAll('link[rel="stylesheet"]')
+			).find((l) => (l.getAttribute("href") || "").includes("font-awesome"));
+			expect(fa).to.exist;
+		});
+
+		it('includes local stylesheet "style.css"', () => {
+			const localCss = Array.from(
+				doc.querySelectorAll('link[rel="stylesheet"]')
+			).find((l) => (l.getAttribute("href") || "").endsWith("style.css"));
+			expect(localCss).to.exist;
+		});
+	});
+
+	mocha.run();
+</script>
