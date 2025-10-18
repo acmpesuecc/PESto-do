@@ -1,337 +1,217 @@
-// import React, { useState } from 'react';
-// import './Dsa.css';
-
-// const Checklist = ({ items, unit, storageKey }) => {
-//     // Load saved state from localStorage or initialize with default values
-//     const [checkedItems, setCheckedItems] = useState(() => {
-//         const savedState = localStorage.getItem(storageKey);
-//         return savedState ? JSON.parse(savedState) : {};
-//     });
-
-//     const handleCheckboxChange = (index) => {
-//         setCheckedItems((prevState) => {
-//             const updatedState = {
-//                 ...prevState,
-//                 [index]: !prevState[index],
-//             };
-
-//             // Save the updated state to localStorage
-//             localStorage.setItem(storageKey, JSON.stringify(updatedState));
-//             return updatedState;
-//         });
-//     };
-
-//     return (
-//         <div className="checklist-container">
-//             <h1>{unit}</h1>
-//             {items.map((item, index) => (
-//                 <div key={index} className="checkbox-item">
-//                     <input
-//                         type="checkbox"
-//                         id={`${unit}-item${index + 1}`}
-//                         checked={checkedItems[index] || false}
-//                         onChange={() => handleCheckboxChange(index)}
-//                     />
-//                     <label
-//                         htmlFor={`${unit}-item${index + 1}`}
-//                         className={checkedItems[index] ? 'checked' : ''}
-//                     >
-//                         {item}
-//                     </label>
-//                 </div>
-//             ))}
-//         </div>
-//     );
-// };
-
-// const DSAChecklist = () => {
-//     const unit1Items = [
-//         "Introduction to DSA",
-//         "Overview of Static and Dynamic Memory Allocation",
-//         "Singly Linked List",
-//         "Doubly Linked List",
-//         "Circular Singly Linked List",
-//         "Circular Doubly Linked List",
-//         "Multilist",
-//         "Intro to sparse matrix (structure)",
-//         "Skip List",
-//         "Skip List Operations",
-//         "Stack - Array Implementation",
-//         "Stack - Linked List Implementation",
-//         "Applications of Stacks - Recursion",
-//         "Applications of Stacks - Tower of Hanoi",
-//         "Infix to Prefix and Postfix Expression",
-//         "Postfix Evaluation",
-//         "Parenthesis Matching",
-//     ];
-
-//     const unit2Items = [
-//         "Queue - Introduction",
-//         "Queue - Linked List Implementation",
-//         "Queue - Array Implementation",
-//         "Circular Queue - Linked List Implementation",
-//         "Circular Queue - Array Implementation",
-//         "Priority Queue",
-//         "Dequeue and its Applications using Linked Lists and Arrays",
-//         "Applications of Queue",
-//         "Case Study - Josephus Problem",
-//         "CPU Scheduling",
-//         "Binary Trees - Introduction",
-//         "Binary Trees - Traversal",
-//         "Binary Search Trees - Introduction",
-//         "n-Ary Trees and Forest",
-//         "Conversion of an N-ary tree and a forest to a binary tree",
-//     ];
-
-//     const unit3Items = [
-//         "Binary Search Trees",
-//         "Binary Search Trees - Operations",
-//         "Threaded Binary Tree - Introduction",
-//         "Threaded Binary Tree - Implementation",
-//         "Heap Tree - Introduction",
-//         "Heap Tree - Implementation",
-//         "Implementation of Priority Queue using Min/Max Heap",
-//         "Balanced Trees",
-//         "AVL Trees",
-//         "AVL Rotation",
-//         "Splay Trees",
-//         "n-Ary Trees and Forest - Traversal",
-//         "Graphs - Introduction",
-//         "Representation of Graph - Adjacency Matrix",
-//         "Representation of Graph - Adjacency List",
-//         "Graphs - Implementation using Adjacency Matrix",
-//         "Graphs - Implementation using Adjacency List",
-//         "Graphs - Traversal using Depth First Search",
-//         "Graphs - Traversal using Breadth First Search",
-//         "Other Tree Operations"
-//     ];
-
-//     const unit4Items = [
-//         "Hashing - Introduction",
-//         "Open Hashing",
-//         "Closed Hashing",
-//         "Collision Handling - Quadratic Probing and Double Hashing",
-//         "Applications of Hashing in Cryptography",
-//         "Trie Trees and Suffix Trees - Introduction",
-//         "Finding a Path in a Network using BFS/DFS",
-//         "Trie Trees - Implementation",
-//         "Checking Graph Connectivity using BFS/DFS",
-//         "Applications - URL Decoding",
-//         "Applications - Computer Network Topology",
-//         "Indexing in a Data Base"
-//     ];
-
-//     return (
-//         <div>
-
-//             <div className="course-title">Data Structures and Algorithms</div>
-
-//             <Checklist
-//                 items={unit1Items}
-//                 unit="UNIT 1"
-//                 storageKey="dsa-unit-1-checklist"
-//             />
-//             <Checklist
-//                 items={unit2Items}
-//                 unit="UNIT 2"
-//                 storageKey="dsa-unit-2-checklist"
-//             />
-//             <Checklist
-//                 items={unit3Items}
-//                 unit="UNIT 3"
-//                 storageKey="dsa-unit-3-checklist"
-//             />
-//             <Checklist
-//                 items={unit4Items}
-//                 unit="UNIT 4"
-//                 storageKey="dsa-unit-4-checklist"
-//             />
-//         </div>
-//     );
-// };
-
-// export default DSAChecklist;
-
-// ...existing code...
 import React, { useState, useEffect, useRef } from 'react';
-import './Dsa.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronUp, faCheckCircle, faCircle } from '@fortawesome/free-solid-svg-icons';
+import '../../SubjectStyles.css';
 
-const Checklist = ({ items, unit, storageKey }) => {
-    const [checkedItems, setCheckedItems] = useState(() => {
-        const savedState = localStorage.getItem(storageKey);
-        return savedState ? JSON.parse(savedState) : {};
+const Checklist = ({ items, unit, storageKey, isExpanded, onToggle }) => {
+  const [checkedItems, setCheckedItems] = useState(() => {
+    const savedState = localStorage.getItem(storageKey);
+    return savedState ? JSON.parse(savedState) : {};
+  });
+
+  const selectAllRef = useRef(null);
+
+  const allChecked = items.length > 0 && items.every((_, i) => !!checkedItems[i]);
+  const someChecked = items.some((_, i) => !!checkedItems[i]) && !allChecked;
+  const completedCount = items.filter((_, i) => !!checkedItems[i]).length;
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate = someChecked;
+    }
+  }, [someChecked]);
+
+  const handleCheckboxChange = (index) => {
+    setCheckedItems((prev) => {
+      const updated = { ...prev, [index]: !prev[index] };
+      localStorage.setItem(storageKey, JSON.stringify(updated));
+      return updated;
     });
+  };
 
-    const selectAllRef = useRef(null);
+  const handleSelectAllChange = (checked) => {
+    const updated = {};
+    items.forEach((_, i) => {
+      updated[i] = checked;
+    });
+    setCheckedItems(updated);
+    localStorage.setItem(storageKey, JSON.stringify(updated));
+  };
 
-    const allChecked = items.length > 0 && items.every((_, i) => !!checkedItems[i]);
-    const someChecked = items.some((_, i) => !!checkedItems[i]) && !allChecked;
-
-    useEffect(() => {
-        if (selectAllRef.current) {
-            selectAllRef.current.indeterminate = someChecked;
-        }
-    }, [someChecked]);
-
-    const handleCheckboxChange = (index) => {
-        setCheckedItems((prevState) => {
-            const updatedState = {
-                ...prevState,
-                [index]: !prevState[index],
-            };
-            localStorage.setItem(storageKey, JSON.stringify(updatedState));
-            return updatedState;
-        });
-    };
-
-    const handleSelectAllChange = (checked) => {
-        const updated = {};
-        items.forEach((_, i) => {
-            updated[i] = checked;
-        });
-        setCheckedItems(updated);
-        localStorage.setItem(storageKey, JSON.stringify(updated));
-    };
-
-    return (
-        <div className="checklist-container">
-            <div className="checklist-header">
-                <label style={{ userSelect: 'none' }}>
-                    <input
-                        ref={selectAllRef}
-                        type="checkbox"
-                        checked={allChecked}
-                        onChange={(e) => handleSelectAllChange(e.target.checked)}
-                    />{' '}
-                    Select all
-                </label>
-                <h1 style={{ display: 'inline-block', marginLeft: '12px' }}>{unit}</h1>
+  return (
+    <div className="unit-container">
+      <div className="unit-header" onClick={onToggle}>
+        <div className="unit-header-content">
+          <div className="unit-info">
+            <h2 className="unit-title">{unit}</h2>
+            <div className="unit-progress">
+              <span className="progress-text">{completedCount} of {items.length} completed</span>
+              <div className="progress-bar-mini">
+                <div 
+                  className="progress-fill-mini"
+                  style={{ width: `${(completedCount / items.length) * 100}%` }}
+                />
+              </div>
             </div>
-
-            {items.map((item, index) => (
-                <div key={index} className="checkbox-item">
-                    <input
-                        type="checkbox"
-                        id={`${unit}-item${index + 1}`}
-                        checked={checkedItems[index] || false}
-                        onChange={() => handleCheckboxChange(index)}
-                    />
-                    <label
-                        htmlFor={`${unit}-item${index + 1}`}
-                        className={checkedItems[index] ? 'checked' : ''}
-                    >
-                        {item}
-                    </label>
-                </div>
-            ))}
+          </div>
+          <div className="unit-controls">
+            <div className="completion-indicator">
+              <FontAwesomeIcon 
+                icon={allChecked ? faCheckCircle : faCircle} 
+                className={`completion-icon ${allChecked ? 'completed' : ''}`}
+              />
+            </div>
+            <FontAwesomeIcon 
+              icon={isExpanded ? faChevronUp : faChevronDown} 
+              className="expand-icon"
+            />
+          </div>
         </div>
-    );
+      </div>
+
+      <div className={`unit-content ${isExpanded ? 'expanded' : ''}`}>
+        <div className="select-all-container">
+          <label className="select-all-label">
+            <input
+              ref={selectAllRef}
+              type="checkbox"
+              checked={allChecked}
+              onChange={(e) => handleSelectAllChange(e.target.checked)}
+              className="select-all-checkbox"
+            />
+            <span className="checkbox-custom"></span>
+            <span className="select-all-text">Select all topics</span>
+          </label>
+        </div>
+
+        <div className="topics-list">
+          {items.map((item, index) => (
+            <div key={index} className="topic-item">
+              <label className="topic-label">
+                <input
+                  type="checkbox"
+                  checked={!!checkedItems[index]}
+                  onChange={() => handleCheckboxChange(index)}
+                  className="topic-checkbox"
+                />
+                <span className="checkbox-custom"></span>
+                <span className={`topic-text ${checkedItems[index] ? 'completed' : ''}`}>
+                  {item}
+                </span>
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const DSAChecklist = () => {
-    const unit1Items = [
-        "Introduction to DSA",
-        "Overview of Static and Dynamic Memory Allocation",
-        "Singly Linked List",
-        "Doubly Linked List",
-        "Circular Singly Linked List",
-        "Circular Doubly Linked List",
-        "Multilist",
-        "Intro to sparse matrix (structure)",
-        "Skip List",
-        "Skip List Operations",
-        "Stack - Array Implementation",
-        "Stack - Linked List Implementation",
-        "Applications of Stacks - Recursion",
-        "Applications of Stacks - Tower of Hanoi",
-        "Infix to Prefix and Postfix Expression",
-        "Postfix Evaluation",
-        "Parenthesis Matching",
-    ];
+  const [expandedUnits, setExpandedUnits] = useState({
+    unit1: false,
+    unit2: false,
+    unit3: false,
+    unit4: false
+  });
 
-    const unit2Items = [
-        "Queue - Introduction",
-        "Queue - Linked List Implementation",
-        "Queue - Array Implementation",
-        "Circular Queue - Linked List Implementation",
-        "Circular Queue - Array Implementation",
-        "Priority Queue",
-        "Dequeue and its Applications using Linked Lists and Arrays",
-        "Applications of Queue",
-        "Case Study - Josephus Problem",
-        "CPU Scheduling",
-        "Binary Trees - Introduction",
-        "Binary Trees - Traversal",
-        "Binary Search Trees - Introduction",
-        "n-Ary Trees and Forest",
-        "Conversion of an N-ary tree and a forest to a binary tree",
-    ];
+  const toggleUnit = (unitKey) => {
+    setExpandedUnits(prev => ({
+      ...prev,
+      [unitKey]: !prev[unitKey]
+    }));
+  };
 
-    const unit3Items = [
-        "Binary Search Trees",
-        "Binary Search Trees - Operations",
-        "Threaded Binary Tree - Introduction",
-        "Threaded Binary Tree - Implementation",
-        "Heap Tree - Introduction",
-        "Heap Tree - Implementation",
-        "Implementation of Priority Queue using Min/Max Heap",
-        "Balanced Trees",
-        "AVL Trees",
-        "AVL Rotation",
-        "Splay Trees",
-        "n-Ary Trees and Forest - Traversal",
-        "Graphs - Introduction",
-        "Representation of Graph - Adjacency Matrix",
-        "Representation of Graph - Adjacency List",
-        "Graphs - Implementation using Adjacency Matrix",
-        "Graphs - Implementation using Adjacency List",
-        "Graphs - Traversal using Depth First Search",
-        "Graphs - Traversal using Breadth First Search",
-        "Other Tree Operations"
-    ];
+  const units = [
+    {
+      key: 'unit1',
+      title: 'UNIT 1 - Introduction & Basic Data Structures',
+      items: [
+        'Introduction to Data Structures',
+        'Types of Data Structures',
+        'Abstract Data Types',
+        'Arrays and Their Applications',
+        'Strings and String Operations',
+        'Pointers and Dynamic Memory Allocation',
+        'Time and Space Complexity Analysis',
+        'Big O Notation',
+        'Asymptotic Analysis',
+      ],
+      storageKey: 'dsa-unit-1-checklist'
+    },
+    {
+      key: 'unit2',
+      title: 'UNIT 2 - Linear Data Structures',
+      items: [
+        'Stack Operations and Implementation',
+        'Applications of Stack',
+        'Infix, Prefix, and Postfix Expressions',
+        'Queue Operations and Implementation',
+        'Types of Queues',
+        'Circular Queue',
+        'Priority Queue',
+        'Deque (Double-ended Queue)',
+        'Applications of Queues',
+      ],
+      storageKey: 'dsa-unit-2-checklist'
+    },
+    {
+      key: 'unit3',
+      title: 'UNIT 3 - Non-Linear Data Structures',
+      items: [
+        'Linked Lists - Singly, Doubly, Circular',
+        'Linked List Operations',
+        'Trees and Tree Terminology',
+        'Binary Trees',
+        'Binary Search Trees',
+        'Tree Traversal Algorithms',
+        'AVL Trees and Balancing',
+        'Heap Data Structure',
+        'Applications of Trees',
+      ],
+      storageKey: 'dsa-unit-3-checklist'
+    },
+    {
+      key: 'unit4',
+      title: 'UNIT 4 - Advanced Topics & Algorithms',
+      items: [
+        'Graph Representation',
+        'Graph Traversal - BFS and DFS',
+        'Shortest Path Algorithms',
+        'Minimum Spanning Tree',
+        'Sorting Algorithms',
+        'Searching Algorithms',
+        'Hashing and Hash Tables',
+        'Dynamic Programming Basics',
+        'Greedy Algorithms',
+      ],
+      storageKey: 'dsa-unit-4-checklist'
+    }
+  ];
 
-    const unit4Items = [
-        "Hashing - Introduction",
-        "Open Hashing",
-        "Closed Hashing",
-        "Collision Handling - Quadratic Probing and Double Hashing",
-        "Applications of Hashing in Cryptography",
-        "Trie Trees and Suffix Trees - Introduction",
-        "Finding a Path in a Network using BFS/DFS",
-        "Trie Trees - Implementation",
-        "Checking Graph Connectivity using BFS/DFS",
-        "Applications - URL Decoding",
-        "Applications - Computer Network Topology",
-        "Indexing in a Data Base"
-    ];
+  return (
+    <div className="subject-page">
+      <div className="subject-header">
+        <h1 className="subject-title">Data Structures and Algorithms</h1>
+        <p className="subject-description">
+          Master the fundamental building blocks of computer science with comprehensive coverage of data structures, algorithms, and their applications.
+        </p>
+      </div>
 
-    return (
-        <div>
-            <div className="course-title">Data Structures and Algorithms</div>
-
-            <Checklist
-                items={unit1Items}
-                unit="UNIT 1"
-                storageKey="dsa-unit-1-checklist"
-            />
-            <Checklist
-                items={unit2Items}
-                unit="UNIT 2"
-                storageKey="dsa-unit-2-checklist"
-            />
-            <Checklist
-                items={unit3Items}
-                unit="UNIT 3"
-                storageKey="dsa-unit-3-checklist"
-            />
-            <Checklist
-                items={unit4Items}
-                unit="UNIT 4"
-                storageKey="dsa-unit-4-checklist"
-            />
-        </div>
-    );
+      <div className="units-container">
+        {units.map(unit => (
+          <Checklist
+            key={unit.key}
+            items={unit.items}
+            unit={unit.title}
+            storageKey={unit.storageKey}
+            isExpanded={expandedUnits[unit.key]}
+            onToggle={() => toggleUnit(unit.key)}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default DSAChecklist;
-// ...existing code...
