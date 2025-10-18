@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSun, faMoon, faMugHot } from '@fortawesome/free-solid-svg-icons';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { faSun, faMoon, faMugHot, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 import Afll from './components/year2/cse/Afll.js';
 import Ddco from './components/year2/cse/Ddco.js';
 import Dsa from './components/year2/cse/Dsa.js';
 import Mcse from './components/year2/cse/Mcse.js';
 import Wt from './components/year2/cse/Wt.js';
-import Cse from './components/year2/Cse';
+import Sidebar from './components/Sidebar';
+import Dashboard from './components/Dashboard';
 
-function App() {
-    const [isYear2Open, setYear2Open] = useState(false);
+function AppContent() {
     const [greeting, setGreeting] = useState('');
     const [icon, setIcon] = useState(null);
     const [isLofiPlaying, setLofiPlaying] = useState(false);
-
-    const toggleCourses = (year) => {
-        if (year === 2) setYear2Open(!isYear2Open);
-    };
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
         const date = new Date();
@@ -44,44 +42,68 @@ function App() {
         setLofiPlaying(!isLofiPlaying);
     };
 
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
+
+    const isHomePage = location.pathname === '/';
+
     return (
-        <Router>
-            <div>
-                <header>
+        <div className="app-container">
+            <header className="app-header">
+                <div className="header-left">
+                    <button className="sidebar-toggle" onClick={toggleSidebar}>
+                        <FontAwesomeIcon icon={sidebarOpen ? faTimes : faBars} />
+                    </button>
                     <div className="logo">
-                        <h1><span class='PES'>PES</span><span class='to'>to</span></h1>
+                        <h1><span className='PES'>PES</span><span className='to'>to</span></h1>
                     </div>
+                </div>
+                <div className="header-right">
                     <button className="lofi-button" onClick={toggleLofi}>
                         {isLofiPlaying ? 'Pause Lofi' : 'Play Lofi'}
                     </button>
-                </header>
-
-                <div id="greeting-container">
-                    <h1 className="heading">
-                        <FontAwesomeIcon icon={icon} /> {greeting}
-                    </h1>
-                    <h2>Choose Your Course</h2>
                 </div>
+            </header>
 
-                <div className="content">
-                    <Cse isYear2Open={isYear2Open} toggleCourses={toggleCourses} />
-                </div>
-
-                {isLofiPlaying && (
-                    <audio autoPlay loop>
-                        <source src="https://ec3.yesstreaming.net:3755/stream" type="audio/mp3" />
-                        Your browser does not support the audio element.
-                    </audio>
-                )}
-
-                <Routes>
-                    <Route path="/year2/cse/ddco" element={<Ddco />} />
-                    <Route path="/year2/cse/dsa" element={<Dsa />} />
-                    <Route path="/year2/cse/mcse" element={<Mcse />} />
-                    <Route path="/year2/cse/afll" element={<Afll />} />
-                    <Route path="/year2/cse/wt" element={<Wt />} />
-                </Routes>
+            <div className="app-layout">
+                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+                
+                <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
+                    {isHomePage && (
+                        <div className="greeting-container">
+                            <h1 className="greeting-heading">
+                                <FontAwesomeIcon icon={icon} /> {greeting}
+                            </h1>
+                            <p className="greeting-subtitle">Ready to tackle your studies?</p>
+                        </div>
+                    )}
+                    
+                    <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/year2/cse/ddco" element={<Ddco />} />
+                        <Route path="/year2/cse/dsa" element={<Dsa />} />
+                        <Route path="/year2/cse/mcse" element={<Mcse />} />
+                        <Route path="/year2/cse/afll" element={<Afll />} />
+                        <Route path="/year2/cse/wt" element={<Wt />} />
+                    </Routes>
+                </main>
             </div>
+
+            {isLofiPlaying && (
+                <audio autoPlay loop>
+                    <source src="https://ec3.yesstreaming.net:3755/stream" type="audio/mp3" />
+                    Your browser does not support the audio element.
+                </audio>
+            )}
+        </div>
+    );
+}
+
+function App() {
+    return (
+        <Router>
+            <AppContent />
         </Router>
     );
 }
