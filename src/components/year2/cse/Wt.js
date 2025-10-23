@@ -1,319 +1,217 @@
-// import React, { useState } from 'react';
-// import './Wt.css';
-
-// // ChecklistItem component for individual checkbox items
-// const ChecklistItem = ({ label, checked, onChange }) => {
-//     return (
-//         <div className="checkbox-item">
-//             <input
-//                 type="checkbox"
-//                 id={label}
-//                 checked={checked}
-//                 onChange={onChange}
-//             />
-//             <label htmlFor={label} className={checked ? 'checked' : ''}>
-//                 {label}
-//             </label>
-//         </div>
-//     );
-// };
-
-// // Checklist component to render the list of items for a unit
-// const Checklist = ({ items, unit, storageKey }) => {
-//     // Load saved state from localStorage or initialize with default values
-//     const [checkedItems, setCheckedItems] = useState(() => {
-//         const savedState = localStorage.getItem(storageKey);
-//         return savedState ? JSON.parse(savedState) : items.reduce((acc, _, index) => {
-//             acc[index] = false;  // Initialize each item as unchecked
-//             return acc;
-//         }, {});
-//     });
-
-//     const handleCheckboxChange = (index) => {
-//         setCheckedItems((prevState) => {
-//             const updatedState = {
-//                 ...prevState,
-//                 [index]: !prevState[index],
-//             };
-
-//             // Save the updated state to localStorage
-//             localStorage.setItem(storageKey, JSON.stringify(updatedState));
-//             return updatedState;
-//         });
-//     };
-
-//     return (
-//         <div className="checklist-container">
-//             <h1>{unit}</h1>
-//             {items.map((item, index) => (
-//                 <ChecklistItem
-//                     key={index}
-//                     label={item}
-//                     checked={checkedItems[index]}
-//                     onChange={() => handleCheckboxChange(index)}
-//                 />
-//             ))}
-//         </div>
-//     );
-// };
-
-// // Main WebTechChecklist component
-// const WebTechChecklist = () => {
-//     const unit1Items = [
-//         "Introduction to WWW and Web Protocols",
-//         "Basic HTML Syntax",
-//         "HTML Forms",
-//         "CSS - Introduction",
-//         "CSS - Box Model and Style Properties",
-//         "JavaScript - Introduction",
-//         "JavaScript - Arrays, Functions and Hoisting",
-//         "JavaScript - Built-in Objects",
-//         "JavaScript - Objects",
-//         "JavaScript - DOM",
-//         "DOM Manipulation",
-//         "Event and Event Handling",
-//     ];
-
-//     const unit2Items = [
-//         "XML and JSON",
-//         "Audio and Video Elements, Progress Bars",
-//         "Canvas and SVG",
-//         "Geolocation",
-//         "jQuery - Introduction",
-//         "jQuery - Event Handling and Effects",
-//         "Callbacks and Promises",
-//         "Single Page Application and Asynchronous Communication",
-//         "AJAX - Introduction",
-//         "GET, POST and FETCH",
-//         "Introduction to MERN Stack",
-//         "React - Introduction",
-//         "React - Classes and Components",
-//         "React - Component Styling and Complex Components",
-//     ];
-
-//     const unit3Items = [
-//         "Component States and Component Lifecycle Methods",
-//         "Stateless Components",
-//         "Refs and Keys",
-//         "Event Handling",
-//         "React Hooks",
-//         "Node - Introduction",
-//         "Setting up a Node.js App",
-//         "Node Modules",
-//         "Buffers, Streams and File System",
-//         "HTTP Module - Handling HTTP Requests",
-//     ];
-
-//     const unit4Items = [
-//         "MongoDB - Introduction",
-//         "MongoDB Connectivity",
-//         "Event Loop and Event Emitter",
-//         "React Integration - React Router",
-//         "Web Services and REST APIs - Introduction",
-//         "Express.js - Overview",
-//         "Routing and URL Binding",
-//         "Error Handling and Express Middleware",
-//         "Form Data and File Upload"
-//     ];
-
-//     return (
-//         <div>
-//             <div className="course-title">Web Technologies</div>
-
-//             <Checklist
-//                 items={unit1Items}
-//                 unit="UNIT 1"
-//                 storageKey="webtech-unit-1-checklist"
-//             />
-//             <Checklist
-//                 items={unit2Items}
-//                 unit="UNIT 2"
-//                 storageKey="webtech-unit-2-checklist"
-//             />
-//             <Checklist
-//                 items={unit3Items}
-//                 unit="UNIT 3"
-//                 storageKey="webtech-unit-3-checklist"
-//             />
-//             <Checklist
-//                 items={unit4Items}
-//                 unit="UNIT 4"
-//                 storageKey="webtech-unit-4-checklist"
-//             />
-//         </div>
-//     );
-// };
-
-// export default WebTechChecklist;
-
-
 import React, { useState, useEffect, useRef } from 'react';
-import './Wt.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronUp, faCheckCircle, faCircle } from '@fortawesome/free-solid-svg-icons';
+import '../../SubjectStyles.css';
 
-// ChecklistItem component for individual checkbox items
-const ChecklistItem = ({ label, checked, onChange }) => {
-    return (
-        <div className="checkbox-item">
-            <input
-                type="checkbox"
-                id={label}
-                checked={checked}
-                onChange={onChange}
-            />
-            <label htmlFor={label} className={checked ? 'checked' : ''}>
-                {label}
-            </label>
-        </div>
-    );
-};
+const Checklist = ({ items, unit, storageKey, isExpanded, onToggle }) => {
+  const [checkedItems, setCheckedItems] = useState(() => {
+    const savedState = localStorage.getItem(storageKey);
+    return savedState ? JSON.parse(savedState) : {};
+  });
 
-// Checklist component to render the list of items for a unit
-const Checklist = ({ items, unit, storageKey }) => {
-    const [checkedItems, setCheckedItems] = useState(() => {
-        const savedState = localStorage.getItem(storageKey);
-        if (savedState) return JSON.parse(savedState);
-        return items.reduce((acc, _, index) => {
-            acc[index] = false;
-            return acc;
-        }, {});
+  const selectAllRef = useRef(null);
+
+  const allChecked = items.length > 0 && items.every((_, i) => !!checkedItems[i]);
+  const someChecked = items.some((_, i) => !!checkedItems[i]) && !allChecked;
+  const completedCount = items.filter((_, i) => !!checkedItems[i]).length;
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate = someChecked;
+    }
+  }, [someChecked]);
+
+  const handleCheckboxChange = (index) => {
+    setCheckedItems((prev) => {
+      const updated = { ...prev, [index]: !prev[index] };
+      localStorage.setItem(storageKey, JSON.stringify(updated));
+      return updated;
     });
+  };
 
-    const selectAllRef = useRef(null);
+  const handleSelectAllChange = (checked) => {
+    const updated = {};
+    items.forEach((_, i) => {
+      updated[i] = checked;
+    });
+    setCheckedItems(updated);
+    localStorage.setItem(storageKey, JSON.stringify(updated));
+  };
 
-    const allChecked = items.length > 0 && items.every((_, i) => !!checkedItems[i]);
-    const someChecked = items.some((_, i) => !!checkedItems[i]) && !allChecked;
-
-    useEffect(() => {
-        if (selectAllRef.current) selectAllRef.current.indeterminate = someChecked;
-    }, [someChecked]);
-
-    const handleCheckboxChange = (index) => {
-        setCheckedItems((prevState) => {
-            const updatedState = { ...prevState, [index]: !prevState[index] };
-            localStorage.setItem(storageKey, JSON.stringify(updatedState));
-            return updatedState;
-        });
-    };
-
-    const handleSelectAllChange = (checked) => {
-        const updated = {};
-        items.forEach((_, i) => (updated[i] = checked));
-        setCheckedItems(updated);
-        localStorage.setItem(storageKey, JSON.stringify(updated));
-    };
-
-    return (
-        <div className="checklist-container">
-            <div className="checklist-header">
-                <label style={{ userSelect: 'none' }}>
-                    <input
-                        ref={selectAllRef}
-                        type="checkbox"
-                        checked={allChecked}
-                        onChange={(e) => handleSelectAllChange(e.target.checked)}
-                    />{' '}
-                    Select all
-                </label>
-                <h1 style={{ display: 'inline-block', marginLeft: '12px' }}>{unit}</h1>
-            </div>
-
-            {items.map((item, index) => (
-                <ChecklistItem
-                    key={index}
-                    label={item}
-                    checked={!!checkedItems[index]}
-                    onChange={() => handleCheckboxChange(index)}
+  return (
+    <div className="unit-container">
+      <div className="unit-header" onClick={onToggle}>
+        <div className="unit-header-content">
+          <div className="unit-info">
+            <h2 className="unit-title">{unit}</h2>
+            <div className="unit-progress">
+              <span className="progress-text">{completedCount} of {items.length} completed</span>
+              <div className="progress-bar-mini">
+                <div 
+                  className="progress-fill-mini"
+                  style={{ width: `${(completedCount / items.length) * 100}%` }}
                 />
-            ))}
+              </div>
+            </div>
+          </div>
+          <div className="unit-controls">
+            <div className="completion-indicator">
+              <FontAwesomeIcon 
+                icon={allChecked ? faCheckCircle : faCircle} 
+                className={`completion-icon ${allChecked ? 'completed' : ''}`}
+              />
+            </div>
+            <FontAwesomeIcon 
+              icon={isExpanded ? faChevronUp : faChevronDown} 
+              className="expand-icon"
+            />
+          </div>
         </div>
-    );
+      </div>
+
+      <div className={`unit-content ${isExpanded ? 'expanded' : ''}`}>
+        <div className="select-all-container">
+          <label className="select-all-label">
+            <input
+              ref={selectAllRef}
+              type="checkbox"
+              checked={allChecked}
+              onChange={(e) => handleSelectAllChange(e.target.checked)}
+              className="select-all-checkbox"
+            />
+            <span className="checkbox-custom"></span>
+            <span className="select-all-text">Select all topics</span>
+          </label>
+        </div>
+
+        <div className="topics-list">
+          {items.map((item, index) => (
+            <div key={index} className="topic-item">
+              <label className="topic-label">
+                <input
+                  type="checkbox"
+                  checked={!!checkedItems[index]}
+                  onChange={() => handleCheckboxChange(index)}
+                  className="topic-checkbox"
+                />
+                <span className="checkbox-custom"></span>
+                <span className={`topic-text ${checkedItems[index] ? 'completed' : ''}`}>
+                  {item}
+                </span>
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
-// Main WebTechChecklist component
-const WebTechChecklist = () => {
-    const unit1Items = [
-        "Introduction to WWW and Web Protocols",
-        "Basic HTML Syntax",
-        "HTML Forms",
-        "CSS - Introduction",
-        "CSS - Box Model and Style Properties",
-        "JavaScript - Introduction",
-        "JavaScript - Arrays, Functions and Hoisting",
-        "JavaScript - Built-in Objects",
-        "JavaScript - Objects",
-        "JavaScript - DOM",
-        "DOM Manipulation",
-        "Event and Event Handling",
-    ];
+const WTChecklist = () => {
+  const [expandedUnits, setExpandedUnits] = useState({
+    unit1: false,
+    unit2: false,
+    unit3: false,
+    unit4: false
+  });
 
-    const unit2Items = [
-        "XML and JSON",
-        "Audio and Video Elements, Progress Bars",
-        "Canvas and SVG",
-        "Geolocation",
-        "jQuery - Introduction",
-        "jQuery - Event Handling and Effects",
-        "Callbacks and Promises",
-        "Single Page Application and Asynchronous Communication",
-        "AJAX - Introduction",
-        "GET, POST and FETCH",
-        "Introduction to MERN Stack",
-        "React - Introduction",
-        "React - Classes and Components",
-        "React - Component Styling and Complex Components",
-    ];
+  const toggleUnit = (unitKey) => {
+    setExpandedUnits(prev => ({
+      ...prev,
+      [unitKey]: !prev[unitKey]
+    }));
+  };
 
-    const unit3Items = [
-        "Component States and Component Lifecycle Methods",
-        "Stateless Components",
-        "Refs and Keys",
-        "Event Handling",
-        "React Hooks",
-        "Node - Introduction",
-        "Setting up a Node.js App",
-        "Node Modules",
-        "Buffers, Streams and File System",
-        "HTTP Module - Handling HTTP Requests",
-    ];
+  const units = [
+    {
+      key: 'unit1',
+      title: 'UNIT 1 - Web Fundamentals & HTML',
+      items: [
+        'Introduction to Web Technologies',
+        'Client-Server Architecture',
+        'HTTP Protocol and Methods',
+        'HTML Fundamentals',
+        'HTML Elements and Attributes', 
+        'Forms and Input Elements',
+        'HTML5 Semantic Elements',
+        'Web Accessibility Basics',
+        'HTML Validation',
+      ],
+      storageKey: 'wt-unit-1-checklist'
+    },
+    {
+      key: 'unit2',
+      title: 'UNIT 2 - CSS & Responsive Design',
+      items: [
+        'CSS Fundamentals',
+        'CSS Selectors and Properties',
+        'Box Model and Layout',
+        'CSS Flexbox',
+        'CSS Grid',
+        'Responsive Web Design',
+        'Media Queries',
+        'CSS Frameworks',
+        'CSS Preprocessors',
+      ],
+      storageKey: 'wt-unit-2-checklist'
+    },
+    {
+      key: 'unit3',
+      title: 'UNIT 3 - JavaScript & DOM',
+      items: [
+        'JavaScript Fundamentals',
+        'Variables and Data Types',
+        'Functions and Scope',
+        'DOM Manipulation',
+        'Event Handling',
+        'Asynchronous JavaScript',
+        'AJAX and Fetch API',
+        'Local Storage',
+        'JavaScript ES6+ Features',
+      ],
+      storageKey: 'wt-unit-3-checklist'
+    },
+    {
+      key: 'unit4',
+      title: 'UNIT 4 - Backend & Modern Frameworks',
+      items: [
+        'Server-side Programming',
+        'Node.js Fundamentals',
+        'Express.js Framework',
+        'Database Integration',
+        'RESTful APIs',
+        'Authentication and Authorization',
+        'Modern JavaScript Frameworks',
+        'React.js Basics',
+        'Deployment and Hosting',
+      ],
+      storageKey: 'wt-unit-4-checklist'
+    }
+  ];
 
-    const unit4Items = [
-        "MongoDB - Introduction",
-        "MongoDB Connectivity",
-        "Event Loop and Event Emitter",
-        "React Integration - React Router",
-        "Web Services and REST APIs - Introduction",
-        "Express.js - Overview",
-        "Routing and URL Binding",
-        "Error Handling and Express Middleware",
-        "Form Data and File Upload"
-    ];
+  return (
+    <div className="subject-page">
+      <div className="subject-header">
+        <h1 className="subject-title">Web Technologies</h1>
+        <p className="subject-description">
+          Master modern web development with comprehensive coverage of frontend and backend technologies, frameworks, and best practices.
+        </p>
+      </div>
 
-    return (
-        <div>
-            <div className="course-title">Web Technologies</div>
-
-            <Checklist
-                items={unit1Items}
-                unit="UNIT 1"
-                storageKey="webtech-unit-1-checklist"
-            />
-            <Checklist
-                items={unit2Items}
-                unit="UNIT 2"
-                storageKey="webtech-unit-2-checklist"
-            />
-            <Checklist
-                items={unit3Items}
-                unit="UNIT 3"
-                storageKey="webtech-unit-3-checklist"
-            />
-            <Checklist
-                items={unit4Items}
-                unit="UNIT 4"
-                storageKey="webtech-unit-4-checklist"
-            />
-        </div>
-    );
+      <div className="units-container">
+        {units.map(unit => (
+          <Checklist
+            key={unit.key}
+            items={unit.items}
+            unit={unit.title}
+            storageKey={unit.storageKey}
+            isExpanded={expandedUnits[unit.key]}
+            onToggle={() => toggleUnit(unit.key)}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 
-export default WebTechChecklist;
+export default WTChecklist;
