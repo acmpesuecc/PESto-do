@@ -11,11 +11,13 @@ import Mcse from './components/year2/cse/Mcse.js';
 import Wt from './components/year2/cse/Wt.js';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
+import { LOFI_STREAM_URL } from './config/lofi';
 
 function AppContent() {
     const [greeting, setGreeting] = useState('');
     const [icon, setIcon] = useState(null);
     const [isLofiPlaying, setLofiPlaying] = useState(false);
+    const [lofiError, setLofiError] = useState('');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const location = useLocation();
 
@@ -39,7 +41,8 @@ function AppContent() {
     }, []);
 
     const toggleLofi = () => {
-        setLofiPlaying(!isLofiPlaying);
+        setLofiError('');
+        setLofiPlaying((isPlaying) => !isPlaying);
     };
 
     const toggleSidebar = () => {
@@ -91,10 +94,19 @@ function AppContent() {
             </div>
 
             {isLofiPlaying && (
-                <audio autoPlay loop>
-                    <source src="https://ec3.yesstreaming.net:3755/stream" type="audio/mp3" />
+                <audio
+                    autoPlay
+                    loop
+                    onError={() => setLofiError('Unable to load the lofi stream. Please try again later.')}
+                >
+                    <source src={LOFI_STREAM_URL} type="audio/mp3" />
                     Your browser does not support the audio element.
                 </audio>
+            )}
+            {lofiError && (
+                <p className="lofi-error" role="alert">
+                    {lofiError}
+                </p>
             )}
         </div>
     );
