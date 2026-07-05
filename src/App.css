@@ -197,6 +197,21 @@ p {
   transform: translateY(0);
 }
 
+.lofi-error {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  max-width: 320px;
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(231, 76, 60, 0.45);
+  border-radius: var(--border-radius);
+  background-color: rgba(231, 76, 60, 0.14);
+  color: #ffd6d1;
+  box-shadow: var(--shadow-md);
+  z-index: 200;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .app-header {
